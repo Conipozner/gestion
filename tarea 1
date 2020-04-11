@@ -1,0 +1,19 @@
+from mip import Model, xsum, maximize, BINARY
+
+p = [10, 13, 18, 31, 7, 15]    #Pesos de los objetos
+v = [11, 15, 20, 35, 10, 33]   #Valor de los objetos
+B = 47               
+I = range(len(v))    # I = {0,1,2,3,4,5}
+
+m = Model('knapsack') 
+
+x = [m.add_var(var_type=BINARY) for i in I]  #6 variables binarias
+
+m.objective = maximize(xsum(v[i]*x[i] for i in I))  # añade la funcion objetivo al modelo
+
+m += xsum(p[i] * x[i] for i in I) <= B  #añade la restricción
+
+m.optimize()    # Resolver
+
+selected = [i+1 for i in I if x[i].x >= 0.9]
+print('Items seleccionados: {}'.format(selected))
